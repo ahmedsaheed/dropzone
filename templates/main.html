@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Firebase Login</title>
+        <link
+            type="text/css"
+            href="{{ url_for('static', path='/styles.css') }}"
+            rel="stylesheet"
+        />
+        <script
+            type="module"
+            src="{{ url_for('static', path='/firebase-login.js')}}"
+        ></script>
+    </head>
+
+    <body>
+        <div id="login-box" hidden="false" style="display: block">
+            Email: <input type="email" id="email" /> Password:
+            <input name="" type="password" id="password" />
+
+            <button id="login">Login</button>
+            <button id="sign-up">Sign Up</button>
+        </div>
+
+        <button id="sign-out" hidden="true">Sign Out</button>
+
+        {% if user_token %}
+        <p>Hello, {{ user_token.email }}</p>
+        <p>Error: {{ error_message }}</p>
+        {% endif %}
+    </body>
+</html>
