@@ -36,6 +36,11 @@ window.addEventListener('load', function () {
                 })
             })
             .catch(error => {
+                let errorMessage = humanizeFirebaseLoginError(error)
+                let errorElement = document.getElementById('login-error')
+                errorElement.innerText = errorMessage
+                errorElement.hidden = false
+                console.log(error.code + ' ' + error.message)
                 console.log(error.code + ' ' + error.message)
             })
     })
@@ -53,6 +58,10 @@ window.addEventListener('load', function () {
                 })
             })
             .catch(error => {
+                let errorMessage = humanizeFirebaseLoginError(error)
+                let errorElement = document.getElementById('login-error')
+                errorElement.innerText = errorMessage
+                errorElement.hidden = false
                 console.log(error.code + ' ' + error.message)
             })
     })
@@ -87,4 +96,24 @@ function parseCookieToken(cookie) {
         }
     }
     return ''
+}
+
+function humanizeFirebaseLoginError(err) {
+    console.log({ err }, err.code)
+    switch (err.code) {
+        case 'auth/email-already-in-use':
+            return 'Email already in use'
+        case 'auth/invalid-login-credentials':
+            return 'Invalid login credentials'
+        case 'auth/invalid-email':
+            return 'Invalid email'
+        case 'auth/weak-password':
+            return 'Weak password'
+        case 'auth/user-not-found':
+            return 'User not found'
+        case 'auth/wrong-password':
+            return 'Wrong password'
+        default:
+            return 'Unknown error'
+    }
 }
