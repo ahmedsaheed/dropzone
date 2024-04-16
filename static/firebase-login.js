@@ -66,7 +66,7 @@ window.addEventListener('load', function () {
             })
     })
 
-    document.getElementById('sign-out').addEventListener('click', () => {
+    document.getElementById('sign-out')?.addEventListener('click', () => {
         signOut(auth).then(() => {
             document.cookie = 'token=;path=/;SameSite=Strict'
             window.location = '/'
@@ -79,10 +79,10 @@ function UpdateUI(cookie) {
     console.log('token: ' + token.length)
     if (token.length > 0) {
         document.getElementById('login-box').style.display = 'none'
-        document.getElementById('sign-out').style.display = 'block'
+        // document.getElementById('sign-out').style.display = 'block'
     } else {
-        document.getElementById('login-box').style.display = 'block'
-        document.getElementById('sign-out').style.display = 'none'
+        document.getElementById('login-box').style.display = 'flex'
+        // document.getElementById('sign-out').style.display = 'none'
     }
 }
 
