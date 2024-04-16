@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "griffithlabs-414212",
+  "private_key_id": "5eca9a3103b2c3a37233b6766ee1655d14ecedc5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC2zZnTcUEn3RZv\nQAirhTPEXgIUBuAbUAF6uBPFYNiKLjBJjlC5B68JEMGOOBU5h2P7dkSLEoZI43Y4\nY54eVZp+iYUlnd/+HrC/lkTWlPYwe1Ts7ZchLpdpIdNq1z3oXuWbWv0g9/r3zJyt\nb3uwsMQ0uYfInOhZVV8cyIrcKnZDtxNg9Y3bvA8dKAvQVOzQ7EVpKa+zaYPoMH9P\nW3R7Kd+WX/gaB2ZNGCAz+pkQY9IhVhHIao6e2KchUPhv4hrgJIqQ7tJ3HUqS5NSU\nS1zZ+sjFJoE8wypLjR7gfXvXnN+Af/mwn9t4buEc/Byt+5ItVWPAufrY55OkJQo+\n66K/ujS5AgMBAAECgf9z+dJeE2cC+Natk4fsnyr4qlZ8iOAlyTHRvyIhV2VfmsOH\n5y0k4XsV2qDyBHgdcjLnQWFl2kWCeM0deWts/g0buqPT+cA3uRY/IVcLIfa59i/V\ny+bWESPTz2ISUVHgMFSmUP5yAYzNKe3nxZLzxodfQVX5hj2NxQaoJuic8KjszBHp\n67oMcGan3QS4NdOK/ul74AY1J5ZM1YIhMb+zuGGW565tEcO7PfzmVQl9A+dXalRK\nhyJcIEYI8QQlCIcMhzFv6IALkERdrV0xSfsy8/JsjhgVTEKXBkEg3eallTmWhmDh\np5JcEBI0Ahzh66uDMSGRgpvM8lIB6b3JMURNnR0CgYEA2dgGK0ovYLLan2XUeatd\nxPedHGsw35swR12rlTefWutnHu213RfIcpIISDQ7Tn1ezSkm8RBmIscgCK+4BYjl\n4nPfAAYpxrjoHiIam7AciUlirj4zadDLLeMWhqwwN+Grf7QrlDD7KHuMfwRMe/Fd\ntHypfF1GB4miEJ+UpIsoN3UCgYEA1tJfuuIzDJMhJZ6MuWngRaGQgMNGwctaGcp8\n9/1RYaKCNP1s80IsQyW1/qfMeiV/u9McEMuj001fv2jez7oxzAbV3UkNSvUAbAt/\nKK+N5QvaIAKKe29oNl06QKyQ+l0nzhDkhk3wWYIuXNEq3dwJlaLwTBSQ8CIGU4u9\n40keI7UCgYAnAcaBA+Sd5Qi+mAZGzweYWFo6l3sF3wzzCnPJ4U7YgeRSJnB1KWgM\nE9gFzcx8zngmNmMxsSUIvy0eQRCrdQrs1KCuqWvbmIp/ss2e6RcDAi/4UUz1epyX\nF92VuclciD0kPce73lVqt0y+BbAIVXzY76WNjkoW2W86mMiN+hj2bQKBgQCZ60AW\nGi6zitPMLY7s5rR/j6SG7ePLxRU4t4HU+dcOmq6qow4mObqXHfUJklcLCcU84aUR\nT6eBJcY90jkbI3C8nAUuOUJh+6uivpYMo8SKYXSXTNrGWGuV0DSF1F9IU+jKWAY1\nSLC2oXTwohoRvq/LXGTKTk4PEIHx6IVUzbXfpQKBgQCglVsax4tfv3j7kK18Zgun\njOS/rXGNcpVtcIGTNSrc1No0fXRnToo2dKdGgZgqZPdLlsZrBybhDmBpZZPghlYk\nJCqf+ICIBdSD3GBG4MStx806Y1q9GzB9SQT5Am9P6J+V9cp3Z1I5RC4Tbc/C0EDx\nDrsLWDW0R1eokT9nQPEVpQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "griffithlabs-414212@appspot.gserviceaccount.com",
+  "client_id": "101949125514247904402",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/griffithlabs-414212%40appspot.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -22,15 +22,116 @@
                 <h2
                     class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
                 >
-                    Sign in to your account
+                    Upload Files
                 </h2>
                 {% if user_token %}
                 <p class="text-center font-bold tracking-tight text-gray-900">
                     Hello, {{ user_token.email }}
                 </p>
+                {% if error_message != "No error here" %}
                 <p class="text-center font-bold tracking-tight text-gray-900">
                     Error: {{ error_message }}
                 </p>
+                {% endif %}
+                <form action="/add-directory" method="POST">
+                    <div class="flex">
+                        <span
+                            class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
+                        >
+                            <svg
+                                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="32"
+                                height="32"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M2 20V4h8l2 2h10v14zm9-3h2v-4.2l1.6 1.6L16 13l-4-4l-4 4l1.4 1.4l1.6-1.6z"
+                                />
+                            </svg>
+                        </span>
+                        <input
+                            type="text"
+                            name="dir_name"
+                            class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Upload Directory"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="text-gray-900 mt-2 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    >
+                        Add Directory
+                    </button>
+                </form>
+
+                <form
+                    action="/upload-file"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                    <label
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        for="file_input"
+                        >Upload file</label
+                    >
+                    <input
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                        id="file_input"
+                        name="file_name"
+                        type="file"
+                    />
+
+                    <button
+                        type="submit"
+                        class="text-gray-900 mt-2 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    >
+                        Upload File
+                    </button>
+                </form>
+
+                <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
+                <h2>Directories</h2>
+                <ul
+                    class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                    {% for dir in directory_list %}
+                    <li
+                        class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600"
+                    >
+                        {{ dir.name }}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Files</h2>
+                <ul
+                    class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                    {% for file in file_list %}
+                    <li
+                        class="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg dark:border-gray-600"
+                    >
+                        <form action="/download-file" method="POST">
+                            <input
+                                type="hidden"
+                                name="filename"
+                                value="{{ file.name }}"
+                            />
+                            {{ file.name }}
+                            <input
+                                role="button"
+                                type="submit"
+                                value="Download"
+                            />
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% endif %}
                 <button
                     class="mt-2 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
