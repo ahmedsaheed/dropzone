@@ -3,7 +3,7 @@ dropbox
 
 Dropbox clone with gcp.
 
-Run using library
+Run using script
 ------------------
 
     bash ./start.sh
