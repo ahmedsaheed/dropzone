@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from scripts.utils import extract_relative_path
 import starlette.status as status
 from scripts.blobs import blob_list, download_blob
 from scripts.directory import add_directory
@@ -24,14 +25,18 @@ async def root(request: Request):
     if not user_token:
         return templates.TemplateResponse('main.html', {'request': request, 'user_token': None, 'error_message': None, 'user_info': None})
 
+    user_id = user_token['email'] + "_" +  user_token['user_id']
+    print(user_token)
     file_list = []
     directory_list = []
     
-    blobs = blob_list(None)
+    blobs = blob_list(None, user_id)
     for blob in blobs:
         if blob.name[-1] == ('/'):
+            blob.name = extract_relative_path(blob.name) 
             directory_list.append(blob)
         else:
+            blob.name = extract_relative_path(blob.name)
             file_list.append(blob)
 
     user = get_user(user_token).get()
@@ -48,10 +53,10 @@ async def add_directory_handler(request: Request):
     form = await request.form()
     dir_name = form['dir_name']
     
-    if dir_name == '' or dir_name[-1] != '/':
+    if dir_name == '':
         return RedirectResponse('/')
-
-    add_directory(dir_name)
+    user_id = user_token['email'] + "_" +  user_token['user_id']
+    add_directory(dir_name, user_id)
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 
@@ -63,8 +68,10 @@ async def download_file_handler(request: Request):
         return RedirectResponse(url='/')
 
     form = await request.form()
+    prefix = f"users/{user_token['email']}_{user_token['user_id']}/"
     file_name = form['filename']
-    file = download_blob(file_name)
+    download_path = prefix + file_name
+    file = download_blob(download_path)
     return Response(file)
 
 
@@ -76,13 +83,13 @@ async def upload_file_handler(request: Request):
         return RedirectResponse(url='/')
 
     form = await request.form()
-
     file = form['file_name']
+    user_id = user_token['email'] + "_" +  user_token['user_id']
 
     # if file.filename == '':
     #     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
     file = form['file_name']
-    add_file(file)
+    add_file(file, user_id)
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
