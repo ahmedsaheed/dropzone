@@ -86,8 +86,8 @@ async def upload_file_handler(request: Request):
     file = form['file_name']
     user_id = user_token['email'] + "_" +  user_token['user_id']
 
-    # if file.filename == '':
-    #     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+    if file.filename == '':
+        return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
     file = form['file_name']
     add_file(file, user_id)
