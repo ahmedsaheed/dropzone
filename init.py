@@ -34,9 +34,9 @@ async def root(request: Request):
     for blob in blobs:
         if blob.name[-1] == ('/'):
             blob.name = extract_relative_path(blob.name) 
-        
             directory_list.append(blob)
         else:
+            blob.name = extract_relative_path(blob.name)
             file_list.append(blob)
 
     user = get_user(user_token).get()
@@ -68,8 +68,10 @@ async def download_file_handler(request: Request):
         return RedirectResponse(url='/')
 
     form = await request.form()
+    prefix = f"users/{user_token['email']}_{user_token['user_id']}/"
     file_name = form['filename']
-    file = download_blob(file_name)
+    download_path = prefix + file_name
+    file = download_blob(download_path)
     return Response(file)
 
 
