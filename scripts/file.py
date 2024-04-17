@@ -11,3 +11,14 @@ def add_file(file, uid):
 
     blob = storage.Blob(path, bucket)
     blob.upload_from_file(file.file)
+
+def delete_file(file_path):
+    storage_client = storage.Client(project=project_name)
+    bucket = storage_client.bucket(project_storage_bucket)
+
+
+    blob = bucket.blob(file_path)
+    if blob.exists():
+        blob.delete()
+    else:
+        print('File does not exist')
