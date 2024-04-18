@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from scripts.utils import extract_relative_path
 import starlette.status as status
 from scripts.blobs import blob_list, download_blob
 from scripts.directory import add_directory
