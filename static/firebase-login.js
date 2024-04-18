@@ -21,9 +21,7 @@ window.addEventListener('load', function () {
     const app = initializeApp(firebaseConfig)
     const auth = getAuth(app)
     UpdateUI(document.cookie)
-    console.log('Hello World load')
-
-    document.getElementById('sign-up').addEventListener('click', () => {
+    document.getElementById('sign-up')?.addEventListener('click', () => {
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
         createUserWithEmailAndPassword(auth, email, password)
@@ -45,7 +43,7 @@ window.addEventListener('load', function () {
             })
     })
 
-    document.getElementById('login').addEventListener('click', () => {
+    document.getElementById('login')?.addEventListener('click', () => {
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
         signInWithEmailAndPassword(auth, email, password)
@@ -76,11 +74,15 @@ window.addEventListener('load', function () {
 
 function UpdateUI(cookie) {
     var token = parseCookieToken(cookie)
-    console.log('token: ' + token.length)
+    var loginBox = document.getElementById('login-box')
     if (token.length > 0) {
-        document.getElementById('login-box').style.display = 'none'
+        if (loginBox) {
+            loginBox.style.display = 'none'
+        }
     } else {
-        document.getElementById('login-box').style.display = 'flex'
+        if (loginBox) {
+            loginBox.style.display = 'flex'
+        }
     }
 }
 

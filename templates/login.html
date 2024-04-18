@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Login - DropZone</title>
+      <link
+         type="text/css"
+         href="{{ url_for('static', path='/styles.css') }}"
+         rel="stylesheet"
+         />
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/forms@0.5.7/src/index.min.js"></script>
+      <script
+         type="module"
+         src="{{ url_for('static', path='/firebase-login.js')}}"
+         ></script>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+   </head>
+   <body class="antialiased">
+      <div>
+         <div id="login-box" class="bg-slate-950 min-h-screen flex items-center justify-center p-8 md:p-0">
+            <div  class="bg-slate-900 shadow-lg flex flex-col items-center rounded-xl overflow-hidden lg:flex-row lg:w-2/3 2xl:w-1/2">
+               <div class="p-8 lg:w-1/2 sm:p-8">
+                  <h1 class="font-bold text-slate-100 text-3xl md:text-4xl md:mb-16">Back up files in the cloud safe and securely.</h1>
+                  <h2 class="text-2xl font-semibold mt-8 mb-6 text-slate-200">Login</h2>
+                  <div  class="flex flex-col">
+                     <div id="input-field" class="flex flex-col mb-4 relative">
+                        <i class="fi fi-rr-envelope absolute top-11 right-5 text-zinc-400"></i>
+                        <label for="email" class="mb-2 text-slate-300">Your email</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required placeholder="youremail@gmail.com" class="px-4 py-2 border-2 border-slate-300 rounded-md max-w-full focus:border-blue-500 focus:outline-none">
+                     </div>
+                     <div id="input-field" class="flex flex-col relative">
+                        <i class="fi fi-rr-lock absolute top-11 right-5 text-zinc-400"></i>
+                        <label for="Password" class="mb-2 text-slate-300">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required
+                           placeholder="your password" class="px-4 py-2 border-2 border-slate-300 rounded-md max-w-full focus:outline-none focus:border-blue-500">
+                     </div>
+                     <p
+                        id="login-error"
+                        class="mt-2 text-sm text-red-600"
+                        hidden="true"
+                        ></p>
+                     <button id="login" class="my-6 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg px-4 py-2 rounded-md" >Login</button>
+                  </div>
+                  <p class="text-slate-300">Don't have an account? <span role="button"  id="sign-up" class="text-blue-500 font-semibold underline">Sign up</span></p>
+               </div>
+               <div class="w-1/2">
+                  <img src="{{ url_for('static', path='/Login.jpeg') }}" alt="" class="h-f lg:block hidden">
+               </div>
+            </div>
+         </div>
+      </div>
+      </div>
+    </body>
+</html>

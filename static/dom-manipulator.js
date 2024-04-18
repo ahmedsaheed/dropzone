@@ -23,7 +23,7 @@ window.addEventListener('load', function () {
     const inputFile = document?.getElementById('dropzone-file')
     const fileNameDisplay = document?.getElementById('selected-file-display')
 
-    inputFile.addEventListener('change', event => {
+    inputFile?.addEventListener('change', event => {
         const selectedFile = event.target.files[0]
 
         if (selectedFile) {

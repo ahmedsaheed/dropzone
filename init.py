@@ -23,7 +23,7 @@ async def root(request: Request):
 
     user_token = validate_firebase_token(id_token)
     if not user_token:
-        return templates.TemplateResponse('main.html', {'request': request, 'user_token': None, 'error_message': None, 'user_info': None})
+        return templates.TemplateResponse('login.html', {'request': request, 'user_token': None, 'error_message': None, 'user_info': None})
 
     user_id = user_token['email'] + "_" +  user_token['user_id']
     print(user_token)
