@@ -33,10 +33,12 @@ async def root(request: Request):
     blobs = blob_list(None, user_id)
     for blob in blobs:
         if blob.name[-1] == ('/'):
-            blob.name = extract_relative_path(blob.name) 
+            blob.name = extract_relative_path(blob.name)
+            blob.content_type = 'Folder'
             directory_list.append(blob)
         else:
             blob.name = extract_relative_path(blob.name)
+            blob.content_type = 'File'
             file_list.append(blob)
 
     user = get_user(user_token).get()
