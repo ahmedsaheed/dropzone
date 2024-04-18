@@ -20,6 +20,28 @@ window.addEventListener('load', function () {
         td.textContent = formattedDateTime
     })
 
+    const humanFileSize = size => {
+        const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024))
+        return (
+            (size / Math.pow(1024, i)).toFixed(2) * 1 +
+            ' ' +
+            ['B', 'kB', 'MB', 'GB', 'TB'][i]
+        )
+    }
+
+    const sizeElements = document?.querySelectorAll('.filesize')
+    // convert bytes to human readable format
+
+    sizeElements.forEach(sizeElement => {
+        const rawSize = sizeElement.textContent.trim()
+
+        const size = parseInt(rawSize)
+
+        const humanReadableSize = humanFileSize(size)
+        console.log(humanReadableSize)
+        sizeElement.textContent = humanReadableSize
+    })
+
     const inputFile = document?.getElementById('dropzone-file')
     const fileNameDisplay = document?.getElementById('selected-file-display')
 
