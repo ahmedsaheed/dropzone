@@ -72,6 +72,27 @@ window.addEventListener('load', function () {
             window.location = '/'
         })
     })
+
+    const tdElements = document?.querySelectorAll('.timestamps')
+
+    tdElements.forEach(td => {
+        const rawTimestamp = td.textContent.trim() // Get raw timestamp
+
+        const date = new Date(rawTimestamp)
+
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true, // For 12-hour AM/PM format
+        }
+
+        const formattedDateTime = date.toLocaleString('en-US', options)
+
+        td.textContent = formattedDateTime
+    })
 })
 
 function UpdateUI(cookie) {

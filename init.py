@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from scripts.utils import extract_relative_path
 import starlette.status as status
 from scripts.blobs import blob_list, download_blob
 from scripts.directory import add_directory
@@ -73,10 +72,6 @@ async def download_file_handler(request: Request):
     download_path = prefix + file_name
     file = download_blob(download_path)
 
-    # save file to local machine
-    with open(file_name, 'wb') as f:
-        f.write(file)
-    
     return Response(file)
 
 
