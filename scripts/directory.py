@@ -25,3 +25,14 @@ def delete_directory(directory_path):
         blob.delete()
     else:
         print('Directory does not exist')
+
+
+def get_directory_by_path(directory_path):
+    storage_client = storage.Client(project=project_name)
+    bucket = storage_client.bucket(project_storage_bucket)
+    blob = bucket.blob(directory_path)
+    if blob.exists():
+        return blob
+    else:
+        print('Directory does not exist')
+        return None

@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path
 import starlette.status as status
 from scripts.blobs import blob_list, download_blob
-from scripts.directory import add_directory
+from scripts.directory import add_directory, delete_directory  
 from scripts.file import add_file, delete_file
 from scripts.login import get_user, validate_firebase_token
 
@@ -14,14 +14,18 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+def token_with_validation(request: Request):
+    id_token = request.cookies.get("token")
+    user_token = validate_firebase_token(id_token)
+    return user_token
+
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    id_token = request.cookies.get("token")
     error_message = "No error here"
     user_token = None
     user = None
+    user_token = token_with_validation(request)
 
-    user_token = validate_firebase_token(id_token)
     if not user_token:
         return templates.TemplateResponse('login.html', {'request': request, 'user_token': None, 'error_message': None, 'user_info': None})
 
@@ -47,8 +51,9 @@ async def root(request: Request):
 
 @app.post("/add-directory", response_class=RedirectResponse)
 async def add_directory_handler(request: Request):
-    id_token = request.cookies.get("token")
-    user_token = validate_firebase_token(id_token)
+
+    user_token = token_with_validation(request)
+
     if not user_token:
         return RedirectResponse(url='/')
 
@@ -64,8 +69,9 @@ async def add_directory_handler(request: Request):
 
 @app.post("/download-file", response_class=RedirectResponse)
 async def download_file_handler(request: Request):
-    id_token = request.cookies.get("token")
-    user_token = validate_firebase_token(id_token)
+
+    user_token = token_with_validation(request)
+
     if not user_token:
         return RedirectResponse(url='/')
 
@@ -80,8 +86,9 @@ async def download_file_handler(request: Request):
 
 @app.post("/delete-file", response_class=RedirectResponse)
 async def delete_file_handler(request: Request):
-    id_token = request.cookies.get("token")
-    user_token = validate_firebase_token(id_token)
+
+    user_token = token_with_validation(request)
+
     if not user_token:
         return RedirectResponse(url='/')
 
@@ -90,6 +97,19 @@ async def delete_file_handler(request: Request):
     file_name = form['filename']
     file_path = prefix + file_name
     delete_file(file_path)
+    return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+
+@app.post("/delete-directory", response_class=RedirectResponse)
+async def delete_directory_handler(request: Request):
+    user_token = token_with_validation(request)
+    if not user_token:
+        return RedirectResponse(url='/')
+
+    form = await request.form()
+    prefix = f"users/{user_token['email']}_{user_token['user_id']}/"
+    dir_name = form['dirname']
+    dir_path = prefix + dir_name
+    delete_directory(dir_path)
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 @app.post("/upload-file", response_class=RedirectResponse)
@@ -116,3 +136,5 @@ async def logout(request: Request):
     response = RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     response.delete_cookie("token")
     return response
+
+
