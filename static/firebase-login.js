@@ -50,7 +50,8 @@ window.addEventListener('load', function () {
             .then(userCredential => {
                 const user = userCredential.user
                 console.log(user)
-                user.getIdToken().then(token => {
+                // force token refresh
+                user.getIdToken(true).then(token => {
                     document.cookie = `token=${token};path=/;SameSite=Strict`
                     window.location = '/'
                 })
