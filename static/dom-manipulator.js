@@ -14,7 +14,7 @@ window.addEventListener('load', function () {
         td.textContent = date.toLocaleString('en-US', options)
     })
 
-    const humanFileSize = size => {
+    const humanizeFileSize = size => {
         const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024))
         return (
             (size / Math.pow(1024, i)).toFixed(2) * 1 +
@@ -25,7 +25,7 @@ window.addEventListener('load', function () {
 
     var sizeElements = document?.querySelectorAll('.filesize')
     sizeElements.forEach(sizeElement => {
-        sizeElement.textContent = humanFileSize(
+        sizeElement.textContent = humanizeFileSize(
             parseInt(sizeElement.textContent.trim())
         )
     })
