@@ -26,13 +26,10 @@ def delete_directory(directory_path):
     else:
         print('Directory does not exist')
 
-
-def get_directory_by_path(directory_path):
-    storage_client = storage.Client(project=project_name)
-    bucket = storage_client.bucket(project_storage_bucket)
-    blob = bucket.blob(directory_path)
-    if blob.exists():
-        return blob
-    else:
-        print('Directory does not exist')
-        return None
+def create_home_directory(user_id, file_blob, directory_blob):
+    if len(file_blob) == 0 and len(directory_blob) == 0:
+        storage_client = storage.Client(project=project_name)
+        bucket = storage_client.bucket(project_storage_bucket)
+        new_path = f"users/{user_id}/"
+        blob = bucket.blob(new_path)
+        blob.upload_from_string('', content_type='application/x-www-form-urlencoded;charset=UTF-8')        

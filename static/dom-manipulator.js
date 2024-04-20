@@ -1,4 +1,5 @@
 window.addEventListener('load', function () {
+    var currentDirEl = document?.getElementById('name_for_current_directory')
     var tdElements = document?.querySelectorAll('.timestamps')
     tdElements.forEach(td => {
         var rawTimestamp = td.textContent.trim()
@@ -67,4 +68,15 @@ window.addEventListener('load', function () {
                 localStorage.getItem('wants-to-delete')
         })
     })
+
+    var subStorageTable = document?.getElementById('sub-storage-table')
+    var storageTable = document?.getElementById('storage-table')
+
+    if (subStorageTable) {
+        storageTable.classList.add('hidden')
+        var currentSubDir = document?.querySelectorAll('.sub_dir_name_getter')[0]
+        localStorage.setItem('current_directory', currentSubDir.value) 
+        console.log('leading dir',currentSubDir.value)
+        currentDirEl.textContent = localStorage.getItem('current_directory')
+    }
 })
