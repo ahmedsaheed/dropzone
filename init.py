@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path
 import starlette.status as status
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list
-from scripts.directory import add_directory, delete_directory, create_home_directory  
+from scripts.directory import add_directory, delete_directory, create_home_directory
 from scripts.file import add_file, delete_file
 from scripts.login import get_user, validate_firebase_token
 
@@ -32,25 +32,59 @@ async def root(request: Request):
 
     user_id = user_token['email'] + "_" +  user_token['user_id']
     print(user_token)
-    file_list = [] 
+    file_list = []
     directory_list = []
     blobs = blob_list(None, user_id)
     for blob in blobs:
         if blob.name[-1] == ('/'):
-            blob.name = extract_relative_path(blob.name)
-            blob.content_type = 'Folder'
-            directory_list.append(blob)
+
+            if should_add_to_list(extract_relative_path(blob.name)):
+                blob.name = extract_relative_path(blob.name)
+                blob.content_type = 'Folder'
+                directory_list.append(blob)
         else:
-            blob.name = extract_relative_path(blob.name)
-            blob.content_type = 'File'
-            file_list.append(blob)
+            if should_add_to_list(extract_relative_path(blob.name)):
+                blob.name = extract_relative_path(blob.name)
+                blob.content_type = 'File'
+                file_list.append(blob)
 
     create_home_directory(user_id, file_list, directory_list)
-    
+
     print("storage", file_list, directory_list)
     user = get_user(user_token).get()
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'user_info': user, 'file_list': file_list, 'directory_list': directory_list})
 
+
+def should_add_to_list(blob_name):
+    """
+     check if the name contains more than one forward slash
+     if it does, it is a subdirectory and should not be added to the list
+    """
+    print(blob_name.count('/'), blob_name)
+    if blob_name.count('/') >= 2:
+        return False
+    return True
+
+def should_add_to_sub(blob_name, sub_directory_path):
+    if sub_directory_path == blob_name:
+        return True
+    # remove the subdirectory path from the blob name
+    if sub_directory_path != blob_name:
+        blob_name = blob_name.replace(sub_directory_path, '')
+    print("name", blob_name)
+    is_directory = False
+    if blob_name[-1] == '/':
+        is_directory = True
+
+    if is_directory:
+        if blob_name.count('/') == 1:
+            return True
+        else:
+            return False
+
+    if blob_name.count('/') == 0:
+        return True
+    return False
 
 @app.post("/add-directory", response_class=RedirectResponse)
 async def add_directory_handler(request: Request):
@@ -62,7 +96,7 @@ async def add_directory_handler(request: Request):
 
     form = await request.form()
     dir_name = form['dir_name']
-    
+
     if dir_name == '':
         return RedirectResponse('/')
     user_id = user_token['email'] + "_" +  user_token['user_id']
@@ -122,16 +156,20 @@ async def get_subdirectory_handler(request: Request):
         return RedirectResponse(url='/')
     form = await request.form()
     sub_directory_path = form['dirname']
-    uid = user_token['email'] + "_" +  user_token['user_id'] 
-    
+    uid = user_token['email'] + "_" +  user_token['user_id']
+
     sub_blobs = get_sub_blob_list(uid, sub_directory_path)
     sub_file_list = []
     sub_directory_list = []
-    
-    file_list = [] 
+
+    if sub_directory_path == '/':
+        return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+
+
+    file_list = []
     directory_list = []
     main_blobs = blob_list(None, uid)
-    
+
     for main_blob in main_blobs:
         if main_blob.name[-1] == ('/'):
             main_blob.name = extract_relative_path(main_blob.name)
@@ -144,13 +182,16 @@ async def get_subdirectory_handler(request: Request):
 
     for sub_blob in sub_blobs:
         if sub_blob.name[-1] == ('/'):
-            sub_blob.name = extract_relative_path(sub_blob.name)
-            sub_blob.content_type = 'Folder'
-            sub_directory_list.append(sub_blob)
+
+            if should_add_to_sub(extract_relative_path(sub_blob.name), sub_directory_path):
+                sub_blob.name = extract_relative_path(sub_blob.name)
+                sub_blob.content_type = 'Folder'
+                sub_directory_list.append(sub_blob)
         else:
-            sub_blob.name = extract_relative_path(sub_blob.name)
-            sub_blob.content_type = 'File'
-            sub_file_list.append(sub_blob)
+            if should_add_to_sub(extract_relative_path(sub_blob.name), sub_directory_path):
+                sub_blob.name = extract_relative_path(sub_blob.name)
+                sub_blob.content_type = 'File'
+                sub_file_list.append(sub_blob)
 
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': None, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': directory_list, 'file_list': file_list })
 
@@ -178,5 +219,3 @@ async def logout(request: Request):
     response = RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     response.delete_cookie("token")
     return response
-
-

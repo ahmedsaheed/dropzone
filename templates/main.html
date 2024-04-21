@@ -107,10 +107,10 @@
                                     <ul class="py-1" role="none">
                                         <li>
                                             <a
-                                                href="#"
+                                                href="/"
                                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 role="menuitem"
-                                                >Dashboard</a
+                                                >Home</a
                                             >
                                         </li>
                                         <li>
@@ -156,7 +156,7 @@
                     <ul class="space-y-2 font-medium">
                         <li>
                             <a
-                                href="#"
+                                href="/"
                                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
                                 <svg
@@ -173,7 +173,7 @@
                                         d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"
                                     />
                                 </svg>
-                                <span class="ms-3">Dashboard</span>
+                                <span class="ms-3">Home</span>
                             </a>
                         </li>
                         <li>
@@ -185,15 +185,17 @@
                             >
                                 <svg
                                     class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                                    aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 18 21"
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 256 256"
                                 >
                                     <path
-                                        d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"
+                                        fill="currentColor"
+                                        d="M224 64h-69.33l-27.74-20.8a16.12 16.12 0 0 0-9.6-3.2H72a16 16 0 0 0-16 16v16H40a16 16 0 0 0-16 16v112a16 16 0 0 0 16 16h152.89A15.13 15.13 0 0 0 208 200.89V184h16.89A15.13 15.13 0 0 0 240 168.89V80a16 16 0 0 0-16-16m0 104h-16v-56a16 16 0 0 0-16-16h-69.33L94.93 75.2a16.12 16.12 0 0 0-9.6-3.2H72V56h45.33l29.87 22.4A8 8 0 0 0 152 80h72Z"
                                     />
                                 </svg>
+
                                 <span
                                     class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap"
                                     >Folders</span
@@ -263,8 +265,9 @@
                             </a>
                         </li>
                         <li>
-                            <a
-                                href="#"
+                            <span
+                                role="button"
+                                id="sign-out"
                                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
                                 <svg
@@ -282,13 +285,10 @@
                                         d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"
                                     />
                                 </svg>
-                                <span
-                                    role="button"
-                                    id="sign-out"
-                                    class="flex-1 ms-3 whitespace-nowrap"
+                                <span class="flex-1 ms-3 whitespace-nowrap"
                                     >Sign Out</span
                                 >
-                            </a>
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -521,7 +521,6 @@
                                         scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                     >
-                                        <!-- {{ dir.name }} -->
                                         <form
                                             action="/get-subdirectory"
                                             method="POST"
@@ -532,6 +531,7 @@
                                                 value="{{ dir.name }}"
                                             />
                                             <input
+                                                onclick="localStorage.setItem('current_directory', '{{ dir.name }}');"
                                                 id="getter_dir_name"
                                                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                                 role="button"
@@ -663,6 +663,8 @@
                     </div>
                     {% endif %} {% if sub_directory_list|length > 0 or
                     sub_file_list|length > 0 %}
+
+                    <button class="back-button text-slate-200">Back</button>
                     <div
                         id="sub-storage-table"
                         class="relative overflow-x-auto shadow-md sm:rounded-lg"
@@ -844,6 +846,7 @@
                             <tbody>
                                 {% for dir in sub_directory_list %}
                                 <tr
+                                    id="sub-dir-storage-table"
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                 >
                                     <td class="w-4 p-4">
@@ -869,11 +872,13 @@
                                             method="POST"
                                         >
                                             <input
+                                                id="get_sub_dir_name"
                                                 type="hidden"
                                                 name="dirname"
                                                 value="{{ dir.name }}"
                                             />
                                             <input
+                                                onclick="localStorage.setItem('current_directory', '{{ dir.name }}');"
                                                 id="getter_dir_name"
                                                 class="sub_dir_name_getter font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                                 role="button"

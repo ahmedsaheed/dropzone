@@ -74,9 +74,56 @@ window.addEventListener('load', function () {
 
     if (subStorageTable) {
         storageTable.classList.add('hidden')
-        var currentSubDir = document?.querySelectorAll('.sub_dir_name_getter')[0]
-        localStorage.setItem('current_directory', currentSubDir.value) 
-        console.log('leading dir',currentSubDir.value)
+        var subDirs = document?.querySelectorAll('.sub_dir_name_getter')
+        var checkAgainst =
+            document?.querySelectorAll('#get_sub_dir_name')[0].value
+
+        //Workaround for the current directory
+        if (localStorage.getItem('current_directory') !== checkAgainst) {
+            localStorage.setItem('current_directory', checkAgainst)
+            var c = localStorage.getItem('current_directory')
+            console.log({ checkAgainst, c })
+        }
         currentDirEl.textContent = localStorage.getItem('current_directory')
+
+        document
+            ?.querySelectorAll('#sub-dir-storage-table')[0]
+            .classList.add('hidden')
+
+        subDirs.forEach(dir => {
+            var initialValue = dir.value
+            dir.value = removeCurrentDirPrefixFromViewString(initialValue)
+        })
+
+        // when we go navigate back the current directory should be updated
+        var backButtons = document?.querySelectorAll('.back-button')
+        backButtons.forEach(backButton => {
+            backButton.addEventListener('click', () => {
+                var currentDir = localStorage.getItem('current_directory')
+                var currentDirArray = currentDir.split('/')
+                console.log(currentDirArray)
+                currentDirArray.pop()
+                currentDirArray.pop()
+                var newCurrentDir = currentDirArray.join('/')
+                console.log(newCurrentDir)
+            })
+        })
     }
 })
+
+const removeCurrentDirPrefixFromViewString = viewString => {
+    var currentDir = localStorage.getItem('current_directory').length
+    return viewString.substring(currentDir)
+}
+
+const goBackOneDir = () => {
+    var currentDir = localStorage.getItem('current_directory')
+    var currentDirArray = currentDir.split('/')
+    if (currentDirArray.length === 2) {
+        window.location = '/'
+    }
+    currentDirArray.pop()
+    currentDirArray.pop()
+    var newCurrentDir = currentDirArray.join('/')
+    localStorage.setItem('current_directory', newCurrentDir)
+}
