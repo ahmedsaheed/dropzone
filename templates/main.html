@@ -663,8 +663,20 @@
                     </div>
                     {% endif %} {% if sub_directory_list|length > 0 or
                     sub_file_list|length > 0 %}
-
-                    <button class="back-button text-slate-200">Back</button>
+                    <form action="/get-subdirectory" method="POST">
+                        <input
+                            id="go_back_dir"
+                            type="hidden"
+                            name="dirname"
+                            value=""
+                        />
+                        <input
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                            role="button"
+                            type="submit"
+                            value="Go Back"
+                        />
+                    </form>
                     <div
                         id="sub-storage-table"
                         class="relative overflow-x-auto shadow-md sm:rounded-lg"
@@ -956,7 +968,9 @@
                                         scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                     >
-                                        {{ file.name }}
+                                        <span class="sub_dir_name_getter"
+                                            >{{ file.name }}</span
+                                        >
                                     </th>
                                     <td class="filesize px-6 py-4">
                                         {{ file.size }}
