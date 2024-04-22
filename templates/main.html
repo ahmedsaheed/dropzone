@@ -779,6 +779,13 @@
                                             >
                                                 <!-- <input checked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"> -->
                                                 <button
+                                                    onclick="(function(){
+                                                               var prefix = document?.getElementById(
+                                                                    'name_for_current_directory'
+                                                                ).textContent
+                                                                var prefixInput = document?.getElementById('upload-directory-prefix')
+                                                                prefixInput.value = prefix
+                                                            })();return false;"
                                                     data-modal-target="create-modal"
                                                     data-modal-toggle="create-modal"
                                                     class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300 text-left"
@@ -1341,6 +1348,12 @@
                                         />
                                     </svg>
                                 </span>
+                                <input
+                                    id="upload-directory-prefix"
+                                    type="hidden"
+                                    name="dir-path-prefix"
+                                    value=""
+                                />
                                 <input
                                     id="dir_name"
                                     type="text"

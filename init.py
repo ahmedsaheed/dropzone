@@ -31,7 +31,6 @@ async def root(request: Request):
         return templates.TemplateResponse('login.html', {'request': request, 'user_token': None, 'error_message': None, 'user_info': None})
 
     user_id = user_token['email'] + "_" +  user_token['user_id']
-    print(user_token)
     file_list = []
     directory_list = []
     blobs = blob_list(None, user_id)
@@ -50,7 +49,6 @@ async def root(request: Request):
 
     create_home_directory(user_id, file_list, directory_list)
 
-    print("storage", file_list, directory_list)
     user = get_user(user_token).get()
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'user_info': user, 'file_list': file_list, 'directory_list': directory_list})
 
@@ -60,7 +58,6 @@ def should_add_to_list(blob_name):
      check if the name contains more than one forward slash
      if it does, it is a subdirectory and should not be added to the list
     """
-    print(blob_name.count('/'), blob_name)
     if blob_name.count('/') >= 2:
         return False
     return True
@@ -71,7 +68,6 @@ def should_add_to_sub(blob_name, sub_directory_path):
     # remove the subdirectory path from the blob name
     if sub_directory_path != blob_name:
         blob_name = blob_name.replace(sub_directory_path, '')
-    print("name", blob_name)
     is_directory = False
     if blob_name[-1] == '/':
         is_directory = True
@@ -95,10 +91,16 @@ async def add_directory_handler(request: Request):
         return RedirectResponse(url='/')
 
     form = await request.form()
-    dir_name = form['dir_name']
+    prefix = form['dir-path-prefix']
 
+    dir_name = form['dir_name']
+    if prefix == '/':
+        prefix = ''
+    
     if dir_name == '':
         return RedirectResponse('/')
+    
+    dir_name = prefix + dir_name
     user_id = user_token['email'] + "_" +  user_token['user_id']
     add_directory(dir_name, user_id)
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
