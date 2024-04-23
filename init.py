@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse, Response, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
@@ -115,7 +115,7 @@ async def download_file_handler(request: Request):
     file_name = form['filename']
     download_path = prefix + str(file_name)
     file = download_blob(download_path)
-    return Response(file)
+    return StreamingResponse(iter([file]), media_type='application/octet-stream', headers={"Content-Disposition": f"attachment;filename={file_name}"})
 
 
 @app.post("/delete-file", response_class=RedirectResponse)
