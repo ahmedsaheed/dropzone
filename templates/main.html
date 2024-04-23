@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
     <head>
         <title>DropZone</title>
@@ -749,6 +749,13 @@
                                                 <!-- <input id="filter-radio-example-1" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"> -->
                                                 <!-- <label for="filter-radio-example-1" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Upload File</label> -->
                                                 <button
+                                                    onclick="(function(){
+                                                               var prefix = document?.getElementById(
+                                                                    'name_for_current_directory'
+                                                                ).textContent
+                                                                var prefixInput = document?.getElementById('upload-file-prefix')
+                                                                prefixInput.value = prefix
+                                                            })();return false;"
                                                     data-modal-target="default-modal"
                                                     data-modal-toggle="default-modal"
                                                     class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300 text-left"
@@ -1186,6 +1193,12 @@
                                 method="POST"
                                 enctype="multipart/form-data"
                             >
+                                <input
+                                    id="upload-file-prefix"
+                                    type="hidden"
+                                    name="file-path-prefix"
+                                    value=""
+                                />
                                 <input
                                     id="dropzone-file"
                                     name="file_name"
