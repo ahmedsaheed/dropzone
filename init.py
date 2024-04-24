@@ -1,17 +1,19 @@
+import starlette.status as status
 from fastapi import FastAPI, Request, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse, Response, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
-import starlette.status as status
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list
-from scripts.directory import add_directory, delete_directory, create_home_directory
+from scripts.directory import add_directory, delete_directory, create_home_directory, should_delete_dir
 from scripts.file import add_file, delete_file
 from scripts.login import get_user, validate_firebase_token
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+error_array = []
 
 def token_with_validation(request: Request):
     id_token = request.cookies.get("token")
@@ -20,10 +22,11 @@ def token_with_validation(request: Request):
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    error_message = "No error here"
     user_token = None
     user = None
     user_token = token_with_validation(request)
+
+    error_message = check_for_error()
 
     if not user_token:
         return templates.TemplateResponse('login.html', {'request': request, 'user_token': None, 'error_message': None, 'user_info': None})
@@ -39,6 +42,7 @@ async def root(request: Request):
                 blob.content_type = 'Folder'
                 directory_list.append(blob)
         else:
+            print(blob.md5_hash)
             if should_add_to_list(extract_relative_path(blob.name)):
                 blob.name = extract_relative_path(blob.name)
                 blob.content_type = 'File'
@@ -47,6 +51,7 @@ async def root(request: Request):
     create_home_directory(user_id, file_list, directory_list)
 
     user = get_user(user_token).get()
+    print("Error Message", error_message)
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'user_info': user, 'file_list': file_list, 'directory_list': directory_list})
 
 
@@ -142,7 +147,11 @@ async def delete_directory_handler(request: Request):
     prefix = f"users/{user_token['email']}_{user_token['user_id']}/"
     dir_name = form['dirname']
     dir_path = prefix + str(dir_name)
+    if not should_delete_dir(dir_path):
+        error_array.append("Can't delete non-empty directory.")
+        return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     delete_directory(dir_path)
+    error_array.append("Directory deleted successfully")
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 
@@ -196,7 +205,8 @@ async def get_subdirectory_handler(request: Request):
                 sub_blob.content_type = 'File'
                 sub_file_list.append(sub_blob)
 
-    return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': None, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': directory_list, 'file_list': file_list })
+    error_message = check_for_error()
+    return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': directory_list, 'file_list': file_list })
 
 
 @app.get("/logout", response_class=RedirectResponse)
@@ -204,3 +214,8 @@ async def logout(request: Request):
     response = RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     response.delete_cookie("token")
     return response
+
+def check_for_error():
+    if len(error_array) > 0:
+        return error_array.pop()
+    return "No error here"
