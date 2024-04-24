@@ -36,6 +36,19 @@ def should_delete_dir(directory_path):
     return len(list_of_blob) <= 1
 
 
-def create_home_directory(user_id, file_blob, directory_blob):
+def create_home_directory_if_necessary(user_id, file_blob, directory_blob):
     if len(file_blob) == 0 and len(directory_blob) == 0:
         add_directory('', user_id)
+
+
+def check_for_duplicate_file(file_list):
+    # itrate through the list of files and check for matching md5_hash property
+    # if a match is found, return the two matching files
+    #
+    matching_files = []
+    for i in range(len(file_list)):
+        print(file_list[i].md5_hash, file_list[i].name)
+        for j in range(i+1, len(file_list)):
+            if file_list[i].md5_hash == file_list[j].md5_hash:
+                matching_files.append((file_list[i], file_list[j]))
+                return matching_files
