@@ -5,8 +5,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list
-from scripts.directory import add_directory, delete_directory, create_home_directory, should_delete_dir
-from scripts.file import add_file, delete_file
+from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, should_delete_dir, check_for_duplicate_file
+from scripts.file import add_file, delete_file, does_file_exist
 from scripts.login import get_user, validate_firebase_token
 
 app = FastAPI()
@@ -42,16 +42,21 @@ async def root(request: Request):
                 blob.content_type = 'Folder'
                 directory_list.append(blob)
         else:
-            print(blob.md5_hash)
+            # print(blob.md5_hash)
             if should_add_to_list(extract_relative_path(blob.name)):
                 blob.name = extract_relative_path(blob.name)
                 blob.content_type = 'File'
                 file_list.append(blob)
 
-    create_home_directory(user_id, file_list, directory_list)
+    create_home_directory_if_necessary(user_id, file_list, directory_list)
+    duplicate_files = check_for_duplicate_file(file_list)
+
+    if not duplicate_files == None:
+        error_array.append("Duplicate files found")
+        error_message = error_array.pop()
+
 
     user = get_user(user_token).get()
-    print("Error Message", error_message)
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'user_info': user, 'file_list': file_list, 'directory_list': directory_list})
 
 
@@ -98,6 +103,10 @@ async def upload_file_handler(request: Request):
     user_id = user_token['email'] + "_" +  user_token['user_id']
 
     if file.filename == '':
+        return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+
+    if does_file_exist(file, prefix, user_id):
+        # TODO: Ask if the user wants to overwrite the file
         return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
     add_file(file, prefix, user_id)
@@ -204,6 +213,10 @@ async def get_subdirectory_handler(request: Request):
                 sub_blob.name = extract_relative_path(sub_blob.name)
                 sub_blob.content_type = 'File'
                 sub_file_list.append(sub_blob)
+
+    duplicate_files = check_for_duplicate_file(sub_file_list)
+    if not duplicate_files == None:
+        error_array.append("Duplicate files found")
 
     error_message = check_for_error()
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': directory_list, 'file_list': file_list })
