@@ -5,8 +5,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list, get_photos
-from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, should_delete_dir, check_for_duplicate_file
-from scripts.file import add_file, delete_file, does_file_exist
+from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, should_delete_dir
+from scripts.file import add_file, delete_file, does_file_exist, check_for_duplicate_file
 from scripts.login import get_user, validate_firebase_token
 
 app = FastAPI()
@@ -50,7 +50,8 @@ async def root(request: Request):
     create_home_directory_if_necessary(user_id, file_list, directory_list)
     duplicate_files = check_for_duplicate_file(file_list)
     if not duplicate_files == None:
-        error_array.append("Duplicate files found")
+        files = duplicate_files[0].name + " and " + duplicate_files[1].name
+        error_array.append("Duplicate files found in your storage: " + files)
         error_message = error_array.pop()
 
     user = get_user(user_token).get()
@@ -138,8 +139,15 @@ async def delete_file_handler(request: Request):
     form = await request.form()
     prefix = f"users/{user_token['email']}_{user_token['user_id']}/"
     file_name = form['filename']
+    try:
+        sub_dir_path = form['delete-path-prefix']
+        print(sub_dir_path)
+    except:
+        sub_dir_path = None
     file_path = prefix + str(file_name)
     delete_file(file_path)
+    if sub_dir_path:
+        return RedirectResponse(url=f'/get-subdirectory?dir-path={sub_dir_path}', status_code=status.HTTP_302_FOUND)
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 
@@ -216,7 +224,8 @@ async def get_subdirectory_handler(request: Request):
 
     duplicate_files = check_for_duplicate_file(sub_file_list)
     if not duplicate_files == None:
-        error_array.append("Duplicate files found")
+        files = duplicate_files[0].name + " and " + duplicate_files[1].name
+        error_array.append("Duplicate files found in this directory: " + files)
 
     error_message = check_for_error()
     return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': [], 'file_list': [] })

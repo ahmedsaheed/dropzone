@@ -84,6 +84,14 @@ window.addEventListener("load", function () {
     var oneDirBackward = goBackOneDir();
     console.log(oneDirBackward);
     assignGoBackOneDirToButton(oneDirBackward);
+    var deleteFilePrefixPath = document?.querySelectorAll(
+      "#delete-file-prefix",
+    );
+    deleteFilePrefixPath.forEach((path) => {
+      console.log("B4", path);
+      path.value = currentDirEl.textContent;
+      console.log("AFTA", path);
+    });
     document
       ?.querySelectorAll("#sub-dir-storage-table")[0]
       .classList.add("hidden");
@@ -98,8 +106,6 @@ window.addEventListener("load", function () {
       }
     });
   }
-
-  // check url param for /get-photos
 
   var getPhotos = window.location.href.includes("/get-photos");
   if (getPhotos) {
