@@ -27,7 +27,8 @@ window.addEventListener("load", function () {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
+        console.log({ user });
+        if (user) shootConfetti();
         user.getIdToken().then((token) => {
           document.cookie = `token=${token};path=/;SameSite=Strict`;
           window.location = "/";
@@ -119,4 +120,27 @@ function humanizeFirebaseLoginError(err) {
     default:
       return "Unknown error";
   }
+}
+
+function shootConfetti() {
+  var duration = 50 * 1000;
+  var end = Date.now() + duration;
+
+  (function frame() {
+    window.confetti({
+      particleCount: 7,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+    });
+    window.confetti({
+      particleCount: 7,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+    });
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
 }
