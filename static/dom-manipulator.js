@@ -87,10 +87,15 @@ window.addEventListener("load", function () {
     var deleteFilePrefixPath = document?.querySelectorAll(
       "#delete-file-prefix",
     );
+    var deleteDirPrefixPath = document?.querySelectorAll(
+      "#delete-folder-prefix",
+    );
     deleteFilePrefixPath.forEach((path) => {
-      console.log("B4", path);
       path.value = currentDirEl.textContent;
-      console.log("AFTA", path);
+    });
+
+    deleteDirPrefixPath.forEach((path) => {
+      path.value = currentDirEl.textContent;
     });
     document
       ?.querySelectorAll("#sub-dir-storage-table")[0]

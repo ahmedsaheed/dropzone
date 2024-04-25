@@ -160,12 +160,22 @@ async def delete_directory_handler(request: Request):
     form = await request.form()
     prefix = f"users/{user_token['email']}_{user_token['user_id']}/"
     dir_name = form['dirname']
+    try:
+        sub_dir_path = form['delete-folder-prefix-name']
+        print(sub_dir_path)
+    except:
+        sub_dir_path = None
+
     dir_path = prefix + str(dir_name)
     if not should_delete_dir(dir_path):
-        error_array.append("Can't delete non-empty directory.")
+        error_array.append("Can't delete non-empty folder.")
+        if sub_dir_path:
+            return RedirectResponse(url=f'/get-subdirectory?dir-path={sub_dir_path}', status_code=status.HTTP_302_FOUND)
         return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     delete_directory(dir_path)
     error_array.append("Directory deleted successfully")
+    if sub_dir_path:
+        return RedirectResponse(url=f'/get-subdirectory?dir-path={sub_dir_path}', status_code=status.HTTP_302_FOUND)
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 
