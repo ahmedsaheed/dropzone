@@ -38,8 +38,21 @@ window.addEventListener("load", function () {
     var selectedFile = event.target.files[0];
 
     if (selectedFile) {
-      document?.getElementById("upload-file-button").classList.remove("hidden");
       document?.getElementById("upload-details-minor").classList.add("hidden");
+      if (checkIfFileExistInCurrBlob(selectedFile.name)) {
+        document
+          ?.getElementById("file-already-exist-warning")
+          .classList.remove("hidden");
+        document
+          ?.getElementById("overwrite-file-button")
+          .classList.remove("hidden");
+        var shouldOverEl = document?.getElementById("overwrite-file");
+        shouldOverEl.value = "true";
+      } else {
+        document
+          ?.getElementById("upload-file-button")
+          .classList.remove("hidden");
+      }
 
       var p = document.createElement("p");
       p.className =
@@ -140,4 +153,13 @@ const goBackOneDir = () => {
   var newCurrentDir = currentDirArray.join("/");
   console.log(newCurrentDir);
   return newCurrentDir + "/";
+};
+
+const checkIfFileExistInCurrBlob = (filename) => {
+  var files = document.querySelectorAll("#file-name-on-table");
+  var fileNames = [];
+  files.forEach((file) => {
+    fileNames.push(file.textContent.trim());
+  });
+  return fileNames.includes(filename);
 };

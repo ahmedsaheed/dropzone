@@ -636,6 +636,7 @@
                                         </div>
                                     </td>
                                     <th
+                                        id="file-name-on-table"
                                         scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                     >
@@ -1031,7 +1032,9 @@
                                         scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                     >
-                                        <span class="sub_dir_name_getter"
+                                        <span
+                                            id="file-name-on-table"
+                                            class="sub_dir_name_getter"
                                             >{{ file.name }}</span
                                         >
                                     </th>
@@ -1139,6 +1142,14 @@
                                 </div>
                                 <div id="selected-file-display"></div>
                             </div>
+                            <div id="file-already-exist-warning" class="hidden">
+                                <p
+                                    class="text-xs text-red-500 dark:text-red-400"
+                                >
+                                    File already exists. Do you want to
+                                    overwrite it?
+                                </p>
+                            </div>
                             <form
                                 action="/upload-file"
                                 method="POST"
@@ -1150,12 +1161,26 @@
                                     type="file"
                                     class="hidden"
                                 />
+
                                 <button
                                     id="upload-file-button"
                                     type="submit"
                                     class="hidden mt-2 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
                                     Upload File
+                                </button>
+                                <input
+                                    id="overwrite-file"
+                                    name="overwrite-file-control"
+                                    type="hidden"
+                                    value=""
+                                />
+                                <button
+                                    id="overwrite-file-button"
+                                    type="submit"
+                                    class="hidden mt-2 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                >
+                                    Overwrite File
                                 </button>
                             </form>
                         </label>
@@ -1249,6 +1274,14 @@
                                 </div>
                                 <div id="selected-file-display"></div>
                             </div>
+                            <div id="file-already-exist-warning" class="hidden">
+                                <p
+                                    class="text-xs text-red-500 dark:text-red-400"
+                                >
+                                    File already exists. Do you want to
+                                    overwrite it?
+                                </p>
+                            </div>
                             <form
                                 action="/upload-file"
                                 method="POST"
@@ -1272,6 +1305,19 @@
                                     class="hidden mt-2 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                 >
                                     Upload File
+                                </button>
+                                <input
+                                    id="overwrite-file"
+                                    name="overwrite-file-control"
+                                    type="hidden"
+                                    value=""
+                                />
+                                <button
+                                    id="overwrite-file-button"
+                                    type="submit"
+                                    class="hidden mt-2 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                >
+                                    Overwrite File
                                 </button>
                             </form>
                         </label>

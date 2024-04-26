@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list, get_photos
 from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, should_delete_dir
-from scripts.file import add_file, delete_file, does_file_exist, check_for_duplicate_file
+from scripts.file import add_file, delete_file, file_exist, check_for_duplicate_file
 from scripts.login import get_user, validate_firebase_token
 
 app = FastAPI()
@@ -76,9 +76,6 @@ async def add_directory_handler(request: Request):
     dir_name = str(prefix) + str(dir_name)
     user_id = user_token['email'] + "_" +  user_token['user_id']
     add_directory(dir_name, user_id)
-
-    # if the directory is added to the root directory, redirect to the root else call get-subdirectory with the new directory as form da
-
     if prefix == '':
         return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     else:
@@ -96,6 +93,11 @@ async def upload_file_handler(request: Request):
     file = form['file_name']
     prefix = form['file-path-prefix']
 
+    try:
+        should_overwrite = str(form['overwrite-file-control'])
+    except:
+        should_overwrite = None
+
     if prefix == '/':
         prefix = ''
     user_id = user_token['email'] + "_" +  user_token['user_id']
@@ -103,12 +105,17 @@ async def upload_file_handler(request: Request):
     if file.filename == '':
         return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
-    if does_file_exist(file, prefix, user_id):
-        # TODO: Ask if the user wants to overwrite the file
-        return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+    if file_exist(file, prefix, user_id) and should_overwrite == "true":
+        path = f"users/{user_token['email']}_{user_token['user_id']}/" + str(file.filename)
+        delete_file(path)
+        add_file(file, prefix, user_id)
+        error_array.append(f"{file.filename} added successfully")
+        if prefix == '':
+            return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+        return RedirectResponse(url=f'/get-subdirectory?dir-path={prefix}', status_code=status.HTTP_302_FOUND)
 
     add_file(file, prefix, user_id)
-
+    error_array.append(f"{file.filename} added successfully")
     if prefix == '':
         return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     else:
