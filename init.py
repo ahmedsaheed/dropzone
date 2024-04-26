@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list, get_photos
-from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, should_delete_dir
+from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, dir_exists, should_delete_dir
 from scripts.file import add_file, delete_file, file_exist, check_for_duplicate_file
 from scripts.login import get_user, validate_firebase_token
 
@@ -75,6 +75,15 @@ async def add_directory_handler(request: Request):
 
     dir_name = str(prefix) + str(dir_name)
     user_id = user_token['email'] + "_" +  user_token['user_id']
+
+    if dir_exists(dir_name, user_id):
+        error_array.append("Folder already exists! skipping creation.")
+        if prefix == '':
+            return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+        else:
+            url_and_params = f'/get-subdirectory?dir-path={dir_name}'
+            return RedirectResponse(url=url_and_params, status_code=status.HTTP_302_FOUND)
+
     add_directory(dir_name, user_id)
     if prefix == '':
         return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)

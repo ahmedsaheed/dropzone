@@ -16,6 +16,14 @@ def add_directory(directory_name, user_id):
     blob = bucket.blob(new_path)
     blob.upload_from_string('', content_type='application/x-www-form-urlencoded;charset=UTF-8')
 
+def dir_exists(directory_name, user_id):
+    storage_client = storage.Client(project=project_name)
+    bucket = storage_client.bucket(project_storage_bucket)
+    new_path = f"users/{user_id}/{directory_name}"
+    if not new_path.endswith('/'):
+        new_path += '/'
+    blob = bucket.blob(new_path)
+    return blob.exists()
 
 def delete_directory(directory_path):
     storage_client = storage.Client(project=project_name)
