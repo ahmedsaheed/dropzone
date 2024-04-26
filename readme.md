@@ -1,9 +1,10 @@
-## Dropbox Replica using GCP.
+<h1 align="center">Dropzone - A dropbox replica</h1>
+<h3 align="center">Upload, Delete and Share Files and Directory via GCP</h3>
 
-To get strated, run the below bash script then open `http://localhost:8000/` on your browser.
+## Get Started
 
 ```console
-bash ./start.sh
+bash ./start.sh   # visit http://localhost:8080
 ```
 
 <details>
