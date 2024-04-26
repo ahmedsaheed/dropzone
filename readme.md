@@ -1,11 +1,12 @@
-<h1 align="center">Dropzone - A dropbox replica</h1>
-<h3 align="center">Upload, Delete and Share Files and Directory via GCP</h3>
-
-## Get Started
+<h3 align="center">Dropzone - A Dropbox Replica</h3>
+<p align="center">
+<samp>Upload, Delete and Share Files and Folders via GCP</samp>
+</p>
 
 ```console
-bash ./start.sh   # visit http://localhost:8080
+bash ./start.sh   # http://localhost:8080
 ```
+![DropZone · 7 22pm · 04-26](https://github.com/ahmedsaheed/dropbox/assets/87912847/44852704-0130-463f-bb72-5fb3c9fa6a21)
 
 <details>
 <summary>Requirements</summary>
