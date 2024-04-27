@@ -100,7 +100,11 @@ async def upload_file_handler(request: Request):
 
     form = await request.form()
     file = form['file_name']
-    prefix = form['file-path-prefix']
+
+    try:
+        prefix = form['file-path-prefix']
+    except:
+        prefix = ''
 
     try:
         should_overwrite = str(form['overwrite-file-control'])
