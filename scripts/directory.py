@@ -4,6 +4,7 @@ from google.cloud import storage
 project_name = local_constants.PROJECT_NAME
 project_storage_bucket = local_constants.PROJECT_STORAGE_BUCKET
 
+# Adds a directory to the user's storage bucket
 def add_directory(directory_name, user_id):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -16,6 +17,7 @@ def add_directory(directory_name, user_id):
     blob = bucket.blob(new_path)
     blob.upload_from_string('', content_type='application/x-www-form-urlencoded;charset=UTF-8')
 
+# Determines if a directory exists in the user's storage bucket
 def dir_exists(directory_name, user_id):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -25,6 +27,7 @@ def dir_exists(directory_name, user_id):
     blob = bucket.blob(new_path)
     return blob.exists()
 
+# Deletes a directory from the user's storage bucket if it exists
 def delete_directory(directory_path):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -35,7 +38,8 @@ def delete_directory(directory_path):
     else:
        print('Directory does not exist')
 
-
+# Determines if a directory should be deleted from the user's storage bucket.
+# If the directory is empty, it would be deleted otherwise nothing would be done
 def should_delete_dir(directory_path):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -44,6 +48,7 @@ def should_delete_dir(directory_path):
     return len(list_of_blob) <= 1
 
 
+# Creates a default root directory if no files or directories are present for the user
 def create_home_directory_if_necessary(user_id, file_blob, directory_blob):
     if len(file_blob) == 0 and len(directory_blob) == 0:
         add_directory('', user_id)

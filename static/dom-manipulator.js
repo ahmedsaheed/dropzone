@@ -1,3 +1,10 @@
+/*
+    DOM Manipulation
+    - This file is responsible for manipulating the DOM elements on the client side.
+    - It is responsible for converting the raw timestamp to a human-readable format.
+    - It is responsible for converting the raw file size to a human-readable format.
+*/
+
 window.addEventListener("load", function () {
   var currentDirEl = document?.getElementById("name_for_current_directory");
   var tdElements = document?.querySelectorAll(".timestamps");

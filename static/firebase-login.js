@@ -27,7 +27,6 @@ window.addEventListener("load", function () {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log({ user });
         if (user) shootConfetti();
         user.getIdToken().then((token) => {
           document.cookie = `token=${token};path=/;SameSite=Strict`;
@@ -36,22 +35,21 @@ window.addEventListener("load", function () {
       })
       .catch((error) => {
         let errorMessage = humanizeFirebaseLoginError(error);
-        let errorElement = document.getElementById("login-error");
+        let errorElement = document?.getElementById("login-error");
         errorElement.innerText = errorMessage;
         errorElement.hidden = false;
-        console.log(error.code + " " + error.message);
         console.log(error.code + " " + error.message);
       });
   });
 
   document.getElementById("login")?.addEventListener("click", () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = document?.getElementById("email").value;
+    const password = document?.getElementById("password").value;
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        // force token refresh
+        //TODO: force token refresh
         user.getIdToken(true).then((token) => {
           document.cookie = `token=${token};path=/;SameSite=Strict`;
           window.location = "/";
@@ -59,13 +57,13 @@ window.addEventListener("load", function () {
       })
       .catch((error) => {
         let errorMessage = humanizeFirebaseLoginError(error);
-        let errorElement = document.getElementById("login-error");
+        let errorElement = document?.getElementById("login-error");
         errorElement.innerText = errorMessage;
         errorElement.hidden = false;
         console.log(error.code + " " + error.message);
       });
   });
-  var signOutButtons = document.querySelectorAll("#sign-out");
+  var signOutButtons = document?.querySelectorAll("#sign-out");
   signOutButtons.forEach((sob) => {
     sob?.addEventListener("click", () => {
       signOut(auth).then(() => {

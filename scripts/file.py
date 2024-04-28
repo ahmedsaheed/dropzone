@@ -1,10 +1,12 @@
 from google.cloud import storage
 import local_constants
 from scripts.login import get_all_users
+from scripts.utils import _extract_file_name
 
 project_name = local_constants.PROJECT_NAME
 project_storage_bucket = local_constants.PROJECT_STORAGE_BUCKET
 
+# Determine if a file exists in the storage bucket
 def file_exist(file, prefix, uid):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -12,6 +14,9 @@ def file_exist(file, prefix, uid):
     blob = bucket.blob(path)
     return blob.exists()
 
+
+# Adds a file to a storage bucket of a user
+# Uses a prefix to determine the subdirectory to add the file to
 def add_file(file, prefix, uid):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -24,9 +29,9 @@ def add_file(file, prefix, uid):
     blob.upload_from_file(file.file)
 
 
+# Itrates through the list of files and check for matching md5_hash property
+# if a match is found, return the two matching files
 def check_for_duplicate_file(file_list):
-    # itrate through the list of files and check for matching md5_hash property
-    # if a match is found, return the two matching files
     matching_files = []
     for i in range(len(file_list)):
         print(file_list[i].md5_hash, file_list[i].name)
@@ -36,6 +41,7 @@ def check_for_duplicate_file(file_list):
                 return matching_files
 
 
+# Delete a blob from the storage bucket using the blob's path
 def delete_file(file_path):
     storage_client = storage.Client(project=project_name)
     bucket = storage_client.bucket(project_storage_bucket)
@@ -45,6 +51,9 @@ def delete_file(file_path):
     else:
         print('File does not exist')
 
+
+# Copy a file from one user's storage bucket to another user's storage bucket
+# Uses the source path to get the file to copy and the recipient email to get the destination path
 # https://cloud.google.com/storage/docs/copying-renaming-moving-objects#copy
 def copy_file(user_token, source_path, recipient_email):
     all_users = get_all_users(user_token)
@@ -83,7 +92,3 @@ def copy_file(user_token, source_path, recipient_email):
           )
     else:
         print('File does not exist')
-
-
-def _extract_file_name(file_path):
-    return file_path.strip().split('/')[-1]
