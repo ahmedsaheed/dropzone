@@ -5,20 +5,25 @@ from google.cloud import firestore
 firebase_request_adapter = requests.Request()
 firestore_db = firestore.Client()
 
-# would be used for sharing files amongst users
-def get_all_users():
+# used for sharing files amongst users
+def get_all_users(user_token) -> list:
     users = firestore_db.collection('users').stream()
     # convert the users to a list
     users_list = []
     for user in users:
         users_list.append(user.to_dict())
-    return users_list
 
+    # remove the user who is currently logged in
+    for user in users_list:
+        if user['id'] == user_token['user_id']:
+            users_list.remove(user)
+            break
+
+    return users_list
 
 
 def get_user(user_token):
     user = firestore_db.collection('users').document(user_token['user_id'])
-
     print(user_token['email'], user_token['user_id'])
 
     if not user.get().exists:
@@ -28,8 +33,6 @@ def get_user(user_token):
         }
         firestore_db.collection('users').document(user_token['user_id']).set(user_data)
 
-    # can we print all the users here?
-    print(get_all_users())
     users = firestore_db.collection('users').stream()
 
     return user

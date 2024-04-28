@@ -6,8 +6,8 @@ from fastapi.staticfiles import StaticFiles
 from scripts.utils import extract_relative_path, should_add_to_list, should_add_to_sub
 from scripts.blobs import blob_list, download_blob, get_sub_blob_list, get_photos
 from scripts.directory import add_directory, delete_directory, create_home_directory_if_necessary, dir_exists, should_delete_dir
-from scripts.file import add_file, delete_file, file_exist, check_for_duplicate_file
-from scripts.login import get_user, validate_firebase_token
+from scripts.file import add_file, copy_file, delete_file, file_exist, check_for_duplicate_file
+from scripts.login import get_user, get_all_users, validate_firebase_token
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -55,7 +55,8 @@ async def root(request: Request):
         error_message = error_array.pop()
 
     user = get_user(user_token).get()
-    return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'user_info': user, 'file_list': file_list, 'directory_list': directory_list})
+    all_users = get_all_users(user_token)
+    return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'user_info': user, 'all_users': all_users, 'file_list': file_list, 'directory_list': directory_list})
 
 
 @app.post("/add-directory", response_class=RedirectResponse)
@@ -171,6 +172,28 @@ async def delete_file_handler(request: Request):
     return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 
+
+@app.post('/share-file', response_class=RedirectResponse)
+async def share_file_handler(request: Request):
+    # we want to use the copy file function to copy the file to the recipient's base directory
+    user_token = token_with_validation(request)
+    if not user_token:
+        return RedirectResponse(url='/')
+
+    source_path_base = f"users/{user_token['email']}_{user_token['user_id']}/"
+    form = await request.form()
+    relative_path = str(form['source_path'])
+    recipient_email = form['recipient_email']
+
+    if relative_path.startswith('/'):
+        relative_path = relative_path[1:]
+
+    source_path = source_path_base + relative_path
+    copy_file(user_token, source_path, recipient_email)
+    error_array.append(f"File shared with {recipient_email}")
+    return RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
+
+
 @app.post("/delete-directory", response_class=RedirectResponse)
 async def delete_directory_handler(request: Request):
     user_token = token_with_validation(request)
@@ -258,7 +281,8 @@ async def get_subdirectory_handler(request: Request):
         error_array.append("Duplicate files found in this directory: " + files)
 
     error_message = check_for_error()
-    return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'error_message': error_message, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': [], 'file_list': [] })
+    all_users = get_all_users(user_token)
+    return templates.TemplateResponse('main.html', {'request': request, 'user_token': user_token, 'all_users': all_users, 'error_message': error_message, 'sub_file_list': sub_file_list, 'sub_directory_list': sub_directory_list, 'directory_list': [], 'file_list': [] })
 
 
 @app.post("/get-photos", response_class=RedirectResponse)

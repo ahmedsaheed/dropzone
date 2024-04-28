@@ -1,5 +1,6 @@
 from google.cloud import storage
 import local_constants
+from scripts.login import get_all_users
 
 project_name = local_constants.PROJECT_NAME
 project_storage_bucket = local_constants.PROJECT_STORAGE_BUCKET
@@ -26,7 +27,6 @@ def add_file(file, prefix, uid):
 def check_for_duplicate_file(file_list):
     # itrate through the list of files and check for matching md5_hash property
     # if a match is found, return the two matching files
-    #
     matching_files = []
     for i in range(len(file_list)):
         print(file_list[i].md5_hash, file_list[i].name)
@@ -44,3 +44,46 @@ def delete_file(file_path):
         blob.delete()
     else:
         print('File does not exist')
+
+# https://cloud.google.com/storage/docs/copying-renaming-moving-objects#copy
+def copy_file(user_token, source_path, recipient_email):
+    all_users = get_all_users(user_token)
+    reciever = None
+    for user in all_users:
+       if user['email'] == recipient_email:
+           reciever = user
+           break
+
+    if reciever is None:
+        print('User not found')
+        return
+    email = reciever['email']
+    id = reciever['id']
+    destination_path = f"users/{email}_{id}/"
+
+    print(f"Copying file from {source_path} to {destination_path}")
+    storage_client = storage.Client(project=project_name)
+    bucket = storage_client.bucket(project_storage_bucket)
+    source_blob = bucket.blob(source_path)
+    source_bucket = source_blob.bucket
+    destination_blob = bucket.blob(destination_path)
+    destination_bucket = destination_blob.bucket
+    extracted_file_name = _extract_file_name(source_blob.name)
+    name = str(destination_blob.name) + extracted_file_name.strip()
+    print(source_blob.exists(), source_blob.name)
+    if source_blob.exists():
+        blob_copy = source_bucket.copy_blob(source_blob, destination_bucket, name)
+        print(
+              "Blob {} in bucket {} copied to blob {} in bucket {}.".format(
+                  source_blob.name,
+                  source_bucket.name,
+                  blob_copy.name,
+                  destination_bucket.name,
+              )
+          )
+    else:
+        print('File does not exist')
+
+
+def _extract_file_name(file_path):
+    return file_path.strip().split('/')[-1]
