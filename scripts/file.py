@@ -37,7 +37,8 @@ def check_for_duplicate_file(file_list):
         print(file_list[i].md5_hash, file_list[i].name)
         for j in range(i+1, len(file_list)):
             if file_list[i].md5_hash == file_list[j].md5_hash:
-                matching_files.append((file_list[i], file_list[j]))
+                matching_files.append(file_list[i])
+                matching_files.append(file_list[j])
                 return matching_files
 
 
